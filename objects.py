@@ -17,10 +17,10 @@ class Image:
         self.scale = scale
         self.rotation = rotation
         self.id = id
-        
         imageName = image.split("/")[-1]
         imageName = f"{imageName.split('.')[0]}_{self.id}.{imageName.split('.')[1]}"
-        self.name = f"{imageName.split('.')[0]}_{self.id}"
+        self.name = imageName.split('.')[0]
+        self.filename = imageName
         shutil.copy(image, f"local/{currentDir}/{imageName}")
         self.image = img.open(f"local/{currentDir}/{imageName}")
         self.width, self.height = self.image.size
@@ -28,7 +28,6 @@ class Image:
         self.image = self.image.rotate(rotation, PIL.Image.NEAREST, expand = 1)
         self.image.save(f"local/{currentDir}/{imageName}")
         self.image = r"local/{currentDir}/{imageName}".format(currentDir = currentDir, imageName = imageName)
-        
         self.file = tk.PhotoImage(file = self.image)
         self.pygameObject = pygame.image.load(image)
         self.pygameObject = pygame.transform.scale(self.pygameObject, (self.width*scale, self.height*scale))
@@ -52,10 +51,11 @@ class Image:
         self.pygameObject = pygame.image.load(imagePath)
         self.file = tk.PhotoImage(file = imagePath)
         
-    def changeName(self, name):
-        self.name = name
-        os.rename(self.image, r"local/{currentDir}/{name}.{ext}".format(currentDir = currentDir, name = name, ext = self.image.split("/")[-1].split(".")[-1]))
-        self.image = r"local/{currentDir}/{name}.{ext}".format(currentDir = currentDir, name = name, ext = self.image.split("/")[-1].split(".")[-1])
+    def changeName(self, name, objects):
+        if name not in objects.keys():
+            self.name = name
+            os.rename(self.image, r"local/{currentDir}/{name}.{ext}".format(currentDir = currentDir, name = name, ext = self.image.split("/")[-1].split(".")[-1]))
+            self.image = r"local/{currentDir}/{name}.{ext}".format(currentDir = currentDir, name = name, ext = self.image.split("/")[-1].split(".")[-1])
         
     def changeRotation(self, rotation):
         imagePath = self.image
@@ -66,6 +66,8 @@ class Image:
         self.file = tk.PhotoImage(file = imagePath)
         self.rotation = rotation
         
-    
     def creteCanvsImage(self):
         self.canvasObject = self.canvas.create_image((self.x, self.y), anchor='nw', image=self.file)
+        
+    def delete(self):
+        self.canvas.delete(self.canvasObject)
