@@ -188,7 +188,7 @@ class Rectangle:
         self.canvas.delete(self.canvasObject)
         
 class Line:
-    def __init__(self, id, canvas, x=0, y=0, width=75, height=75, color="#9c9c9c", name="", scale=1):
+    def __init__(self, id, canvas, x=0, y=0, width=75, height=75, color="#9c9c9c", name="", scale=1, thickness=5):
         self.x = x
         self.y = y
         self.width = width
@@ -197,6 +197,7 @@ class Line:
         self.id = id
         self.canvas = canvas
         self.scale = scale
+        self.thickness = thickness
         self.type = "line"
         if name != "":
             self.name = name
@@ -231,12 +232,16 @@ class Line:
         self.color = color
         self.canvas.itemconfig(self.canvasObject, fill=self.color)
     
+    def changeThickness(self, thickness):
+        self.thickness = thickness
+        self.canvas.itemconfig(self.canvasObject, width=self.thickness)
+    
     def createCanvasObject(self):
-        self.canvasObject = self.canvas.create_line(self.x, self.y, self.x+self.width, self.y+self.height, fill=self.color, width=5)
+        self.canvasObject = self.canvas.create_line(self.x, self.y, self.x+self.width, self.y+self.height, fill=self.color, width=self.thickness)
         
     def updateObject(self):
         self.canvas.delete(self.canvasObject)
-        self.canvasObject = self.canvas.create_line(self.x, self.y, self.x+self.width, self.y+self.height, fill=self.color, width=5)
+        self.canvasObject = self.canvas.create_line(self.x, self.y, self.x+self.width, self.y+self.height, fill=self.color, width=self.thickness)
         
     def delete(self):
         self.canvas.delete(self.canvasObject)

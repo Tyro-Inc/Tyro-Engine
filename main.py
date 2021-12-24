@@ -2,6 +2,8 @@ import tkinter as tk
 from tkinter import ttk
 from objects import *
 from tkinter import filedialog
+from tkinter import colorchooser
+from tkinter import font
 from uuid import uuid4
 import random
 import json
@@ -41,7 +43,11 @@ class App:
         self.propheight = tk.StringVar()
         self.title = tk.StringVar()
         self.currentObject = tk.StringVar()
+        self.color_code = None
+        self.font = tk.StringVar()
+        self.fonts = list(font.families())
         
+        self.font.set("Arial")
         self.title.set("Untitled")
         
         #Initialize the Top Bar
@@ -82,6 +88,9 @@ class App:
         self.propscalelabel.place(x=1070, y=600)
         self.propscaleinput = tk.Entry(self.root, textvariable=self.propscale, font=(self.config['font'], 20), bg=self.config['input']['background'])
         self.propscaleinput.place(x=1140, y=600, width=60, height=40)
+        
+        self.propbutton = tk.Button(self.root, text="Properties", command=self.showPropertiesWindow, font=(self.config['font'], 20), bg=self.config['buttons']['background'])
+        self.propbutton.place(x=1212, y=600, width=150, height=40)
         
         self.propupdatebutton = tk.Button(self.root, text="Update", font=(self.config['font'], 20), command=self.updateObject, bg=self.config['buttons']['background'])
         self.propupdatebutton.place(x=1050, y=650, width=150, height=40)
@@ -140,23 +149,24 @@ class App:
 
     def updateObject(self):
         GameobjectName = self.objectSelectMenu.get()
-        Gameobject = self.objects[GameobjectName]
-        Gameobject.changeX(float(self.propx.get()))
-        Gameobject.changeY(float(self.propy.get()))
-        if Gameobject.type != "text":
-            Gameobject.changeWidth(float(self.propwidth.get()))
-            Gameobject.changeHeight(float(self.propheight.get()))
-            Gameobject.changeScale(float(self.propscale.get()))
-        Gameobject.changeName(self.propname.get(), self.objects)
-        if Gameobject.type == "image":
-            self.root.image = Gameobject.file
-            Gameobject.createCanvasImage()
-        else:
-            Gameobject.updateObject()
-        del self.objects[GameobjectName]
-        self.objects[Gameobject.name] = Gameobject
-        self.objectSelectMenu['values'] = list(self.objects.keys())
-        self.currentObject.set(Gameobject.name)
+        if GameobjectName != "":
+            Gameobject = self.objects[GameobjectName]
+            Gameobject.changeX(float(self.propx.get()))
+            Gameobject.changeY(float(self.propy.get()))
+            if Gameobject.type != "text":
+                Gameobject.changeWidth(float(self.propwidth.get()))
+                Gameobject.changeHeight(float(self.propheight.get()))
+                Gameobject.changeScale(float(self.propscale.get()))
+            Gameobject.changeName(self.propname.get(), self.objects)
+            if Gameobject.type == "image":
+                self.root.image = Gameobject.file
+                Gameobject.createCanvasImage()
+            else:
+                Gameobject.updateObject()
+            del self.objects[GameobjectName]
+            self.objects[Gameobject.name] = Gameobject
+            self.objectSelectMenu['values'] = list(self.objects.keys())
+            self.currentObject.set(Gameobject.name)
         
     def addImage(self):
         image = filedialog.askopenfilename(initialdir = "/", title = "Select file", filetypes = (("png files","*.png"),("all files","*.*")))
@@ -196,18 +206,93 @@ class App:
     def deleteObject(self):
         print(self.objects)
         Gameobject = self.objectSelectMenu.get()
-        Gameobject = self.objects[Gameobject]
-        Gameobject.delete()
-        Gameobject.tab.destroy()
-        del self.objects[Gameobject.name]
-        try:
-            self.currentObject.set(self.objects[list(self.objects.keys())[0]].name)
-        except:
-            self.currentObject.set("")
-        self.showObjectDetails("")
-        print(self.objects)
-        
-        
+        if Gameobject != "":
+            Gameobject = self.objects[Gameobject]
+            Gameobject.delete()
+            Gameobject.tab.destroy()
+            del self.objects[Gameobject.name]
+            try:
+                self.currentObject.set(self.objects[list(self.objects.keys())[0]].name)
+            except:
+                self.currentObject.set("")
+            self.objectSelectMenu['values'] = list(self.objects.keys())
+            self.showObjectDetails("")
+            print(self.objects)
+    
+    def showPropertiesWindow(self):
+        GameobjectName = self.objectSelectMenu.get()
+        if GameobjectName != "":
+            Gameobject = self.objects[GameobjectName]
+            if Gameobject.type == "image":
+                return None
+            self.propwindow = tk.Toplevel(self.root)
+            self.propwindow.title("Properties")
+            self.propwindow.geometry("400x300")
+            self.propwindow.resizable(0, 0)
+            self.propwindow.config(bg=self.config['editor']['background'])
+            self.propwindow.transient(self.root)
+            self.propwindow.grab_set()
+            self.propwindow.focus_set()
+            self.propwinupdatebutton = tk.Button(self.propwindow, text="Update", command=self.propWinUpdateObject, bg=self.config['editor']['background'], font=(self.config['font'], 15))
+            self.propwintitle = tk.Label(self.propwindow, text=f"{GameobjectName} Properties", font=(self.config['font'], 20), bg=self.config['editor']['background'], justify=tk.CENTER)
+            self.propwintitle.place(x=0, y=30, width=400)
+            self.colorPicker = tk.Button(self.propwindow, text="Color", command=self.showColorPicker, bg=self.config['editor']['background'], font=(self.config['font'], 15))
+            self.colorPicker.place(x=205, y=75, width=100, height=30)
+            if Gameobject.type == "rectangle" or Gameobject.type == "ellipse":
+                self.propwinupdatebutton.place(x=125, y=135, width=150, height=40)
+            if Gameobject.type == "line":
+                self.textthicknesslabel = tk.Label(self.propwindow, text="Thickness", bg=self.config['editor']['background'], font=(self.config['font'], 15))
+                self.textthicknesslabel.place(x=82, y=132)
+                self.textthickness = tk.Entry(self.propwindow, bg=self.config['editor']['background'], font=(self.config['font'], 15))
+                self.textthickness.place(x=220, y=130, width=100, height=30)
+                self.textthickness.insert(0, Gameobject.thickness)
+                self.propwinupdatebutton.place(x=125, y=185, width=150, height=40)
+            if Gameobject.type == "text":
+                self.textfontlabel = tk.Label(self.propwindow, text="Font", bg=self.config['editor']['background'], font=(self.config['font'], 15))
+                self.textfontlabel.place(x=82, y=132)
+                self.textfont = ttk.Combobox(self.propwindow, values=self.fonts, state="readonly", textvariable=self.font, font=(self.config['font'], 15))
+                self.textfont.place(x=220, y=130, width=100, height=30)
+                self.textsize = tk.Entry(self.propwindow, bg=self.config['editor']['background'], font=(self.config['font'], 15))
+                self.textsize.place(x=220, y=170, width=100, height=30)
+                self.textsize.insert(0, Gameobject.size)
+                self.textsizelabel = tk.Label(self.propwindow, text="Size", bg=self.config['editor']['background'], font=(self.config['font'], 15))
+                self.textsizelabel.place(x=82, y=170)
+                self.textLabel = tk.Label(self.propwindow, text="Text", bg=self.config['editor']['background'], font=(self.config['font'], 15))
+                self.textLabel.place(x=82, y=210)
+                self.text = tk.Entry(self.propwindow, bg=self.config['editor']['background'], font=(self.config['font'], 15))
+                self.text.place(x=220, y=210, width=100, height=30)
+                self.propwinupdatebutton.place(x=125, y=285, width=150, height=40)
+            
+    
+    def showColorPicker(self):
+        color_code = colorchooser.askcolor(title ="Choose color")
+        self.color_code = color_code[1] if color_code[1] != None else None
+    
+    def propWinUpdateObject(self):
+        Gameobject = self.objects[self.objectSelectMenu.get()]
+        if Gameobject.type != "image":
+            if self.color_code != None:
+                Gameobject.changeColor(self.color_code)
+                print(self.color_code)
+        if Gameobject.type == "line":
+            thickness = self.textthickness.get()
+            if thickness != "":
+                if thickness.isdigit():
+                    if int(thickness) > 0:
+                        Gameobject.changeThickness(int(self.textthickness.get()))
+        if Gameobject.type == "text":
+            font = self.font
+            size = self.textsize.get()
+            text = self.text.get()
+            Gameobject.changeText(text)
+            Gameobject.changeFont(font)
+            if size != "":
+                if size.isdigit():
+                    if int(size) > 0:
+                        Gameobject.changeSize(int(size))
+                
+        self.propwindow.destroy()
+    
 if __name__ == '__main__':
     root = tk.Tk()
     app = App(root)
