@@ -130,3 +130,5 @@ dmypy.json
 local/
 demo thing.png
 test.py
+run.bat
+compiler/

@@ -1,0 +1,21 @@
+{
+    "background": "#e9c46a",
+    "text": "#e9c46a",
+    "font": "Acme",
+    "buttons":{
+        "background": "#f4a261",
+        "text": "#e9c46a"
+    },
+    "editor":{
+        "background": "#f4a261",
+        "text": "#e9c46a"
+    },
+    "label":{
+        "background": "#e9c46a",
+        "text": "#e9c46a"
+    },
+    "input":{
+        "background": "#e76f51",
+        "text": "#e9c46a"
+    }
+}
