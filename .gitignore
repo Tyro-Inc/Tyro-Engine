@@ -127,8 +127,12 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# My changes
 local/
 demo thing.png
 test.py
 run.bat
 compiler/
+test project/
+.vscode/
