@@ -136,3 +136,4 @@ run.bat
 Interpreter/
 test project/
 .vscode/
+env/
