@@ -103,6 +103,7 @@ def run(objects, code):
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     pygame.display.set_caption("Tyro Game Engine Preview")
     clock = pygame.time.Clock()
+    running = True
     init = True
     for obj in objects.keys():
         objects[obj].screen = screen

@@ -28,7 +28,7 @@ class ProjectManager:
         )
         root.geometry(alignstr)
         root.resizable(width=False, height=False)
-
+        self.path = None
         self.config = json.load(open("config.json"))
         root.configure(background=self.config["background"])
         self.root = root
@@ -347,7 +347,7 @@ class App:
             self.root,
             width=950,
             height=620,
-            font=(self.config["font"], 20),
+            font=("consolas", 20),
             bg=self.config["editor"]["background"],
         )
         tab.place(x=20, y=80, width=950, height=620)
