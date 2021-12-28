@@ -101,7 +101,7 @@ class ProjectManager:
             projs = json.load(open("projects.json"))
             projs.append(proj)
             json.dump(projs, open("projects.json", "w"))
-            open(path + "/main.ty", "w").close()
+            open(path + "/code.ty", "w").close()
 
             root.destroy()
 
