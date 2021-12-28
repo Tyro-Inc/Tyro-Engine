@@ -133,6 +133,6 @@ local/
 demo thing.png
 test.py
 run.bat
-compiler/
+Interpreter/
 test project/
 .vscode/

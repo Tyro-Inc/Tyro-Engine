@@ -1,7 +1,6 @@
 # Tyro Engine V0.1
 ## A Game Engine Designed For Kids
 
-<h2 style="color: #eb6a59">(This project uses Python 3.10.1!)</h2>
 <br>
 
 # What is Tyro Engine?

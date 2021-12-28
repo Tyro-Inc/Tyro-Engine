@@ -7,6 +7,8 @@ import random
 import json
 import shutil
 from time import sleep
+import sys, os
+from interpreter import run, close
 
 path = None
 
@@ -92,21 +94,23 @@ class ProjectManager:
             self.path = path
             os.mkdir(path + "/assets")
             os.mkdir(path + "/assets/edited")
-            os.mkdir(path + "/scripts")
             project = {"name": self.newProjectName.get(), "objects": []}
             json.dump(project, open(path + "/project.tyro", "w"))
             proj = {"name": self.newProjectName.get(), "path": path}
-            
+
             projs = json.load(open("projects.json"))
             projs.append(proj)
             json.dump(projs, open("projects.json", "w"))
-            
+            open(path + "/main.ty", "w").close()
+
             root.destroy()
+
     def openProject(self):
         proj = self.projectList.get(self.projectList.curselection())
         self.path = proj.split(" |/| ")[1]
         if os.path.isdir(self.path):
             root.destroy()
+
 
 class App:
     def __init__(self, root, path):
@@ -176,6 +180,15 @@ class App:
         self.objectSelectMenu["values"] = list(self.objects.keys())
         self.objectSelectMenu.place(x=20, y=25, width=200, height=35)
         self.objectSelectMenu.bind("<<ComboboxSelected>>", self.showObjectDetails)
+
+        self.runButton = tk.Button(
+            self.root,
+            text="Run",
+            font=(self.config["font"], 20),
+            bg=self.config["buttons"]["background"],
+            command=self.execute,
+        )
+        self.runButton.place(x=580, y=25, width=135, height=35)
 
         # Initialize the properties section
         self.propnamelabel = tk.Label(
@@ -313,11 +326,23 @@ class App:
         self.addobjectmenu.add_command(label="Line", command=self.addLine)
         self.addobjectmenu.add_command(label="Text", command=self.addText)
 
-    def create_tab(self, name):
+    def execute(self):
+        try:
+            self.saveProject()
+            code = open(self.path + "/code.ty", "r").read()
+            run(self.objects, code)
+            close()
+        except Exception as e:
+            messagebox.showerror(
+                message=f"Error during execution, \nError: {e}",
+                title="Error",
+            )
+            close()
+
+    def create_tab(self):
         """
         Creates a new tk.Text Object and appends it to the object
         """
-        # tab = tk.Frame(self.root)
         tab = tk.Text(
             self.root,
             width=950,
@@ -326,11 +351,12 @@ class App:
             bg=self.config["editor"]["background"],
         )
         tab.place(x=20, y=80, width=950, height=620)
-        # writingarea.pack(fill="both", expand=True)
-        self.objectSelectMenu["values"] = list(self.objects.keys())
-        self.currentObject.set(name)
-        self.showObjectDetails("")
         return tab
+
+    def newObject(self, name):
+        self.currentObject.set(name)
+        self.objectSelectMenu["values"] = list(self.objects.keys())
+        self.showObjectDetails("")
 
     def showObjectDetails(self, arg):
         """
@@ -358,10 +384,6 @@ class App:
             self.propscale.set("")
             self.propwidth.set("")
             self.propheight.set("")
-        try:
-            self.objects[Gameobject.name].tab.lift()
-        except:
-            pass
 
     def updateObject(self):
         """
@@ -377,7 +399,7 @@ class App:
                 Gameobject.changeWidth(float(self.propwidth.get()))
                 Gameobject.changeHeight(float(self.propheight.get()))
                 Gameobject.changeScale(float(self.propscale.get()))
-            Gameobject.changeName(self.propname.get(), self.objects)
+            Gameobject.changeName(self.propname.get().replace(" ", ""), self.objects)
             if Gameobject.type == "image":
                 self.root.image = Gameobject.file
                 Gameobject.createCanvasImage()
@@ -399,15 +421,13 @@ class App:
             filetypes=(("png files", "*.png"), ("all files", "*.*")),
         )
         if image != "":
-            print(self.path)
             ID = str(random.randint(1000, 10000))
             imgname = image.split("/")[-1]
             imgname = f"{imgname.split('.')[0]}_{ID}"
             self.objects[imgname] = Image(ID, image, self.canvas, path=self.path)
             self.root.image = self.objects[imgname].file
             self.objects[imgname].createCanvasImage()
-            self.objects[imgname].tab = self.create_tab(imgname)
-        # print(self.objects)
+            self.newObject(imgname)
 
     def addRectangle(self):
         """
@@ -417,9 +437,7 @@ class App:
         ID = str(random.randint(1000, 10000))
         self.objects["rectangle_" + str(ID)] = Rectangle(ID, self.canvas)
         self.objects["rectangle_" + str(ID)].createCanvasObject()
-        self.objects["rectangle_" + str(ID)].tab = self.create_tab(
-            "rectangle_" + str(ID)
-        )
+        self.newObject("rectangle_" + str(ID))
 
     def addEllipse(self):
         """
@@ -429,7 +447,7 @@ class App:
         ID = str(random.randint(1000, 10000))
         self.objects["ellipse_" + str(ID)] = Ellipse(ID, self.canvas)
         self.objects["ellipse_" + str(ID)].createCanvasObject()
-        self.objects["ellipse_" + str(ID)].tab = self.create_tab("ellipse_" + str(ID))
+        self.newObject("ellipse_" + str(ID))
 
     def addLine(self):
         """
@@ -439,7 +457,7 @@ class App:
         ID = str(random.randint(1000, 10000))
         self.objects["line_" + str(ID)] = Line(ID, self.canvas)
         self.objects["line_" + str(ID)].createCanvasObject()
-        self.objects["line_" + str(ID)].tab = self.create_tab("line_" + str(ID))
+        self.newObject("line_" + str(ID))
 
     def addText(self):
         """
@@ -449,7 +467,7 @@ class App:
         ID = str(random.randint(1000, 10000))
         self.objects["text_" + str(ID)] = Text(ID, self.canvas)
         self.objects["text_" + str(ID)].createCanvasObject()
-        self.objects["text_" + str(ID)].tab = self.create_tab("text_" + str(ID))
+        self.newObject("text_" + str(ID))
 
     def deleteObject(self):
         """
@@ -459,7 +477,6 @@ class App:
         if Gameobject != "":
             Gameobject = self.objects[Gameobject]
             Gameobject.delete()
-            Gameobject.tab.destroy()
             del self.objects[Gameobject.name]
             try:
                 self.currentObject.set(self.objects[list(self.objects.keys())[0]].name)
@@ -467,7 +484,6 @@ class App:
                 self.currentObject.set("")
             self.objectSelectMenu["values"] = list(self.objects.keys())
             self.showObjectDetails("")
-            print(self.objects)
 
     def showPropertiesWindow(self):
         """
@@ -588,7 +604,6 @@ class App:
         if Gameobject.type != "image":
             if self.color_code != None:
                 Gameobject.changeColor(self.color_code)
-                print(self.color_code)
         if Gameobject.type == "line":
             thickness = self.textthickness.get()
             if thickness != "":
@@ -607,7 +622,7 @@ class App:
                         Gameobject.changeSize(int(size))
 
         self.propwindow.destroy()
-        
+
     def loadProject(self):
         """
         Loads a project from a folder
@@ -698,19 +713,22 @@ class App:
                     Gameobject.createCanvasImage()
                 else:
                     Gameobject.updateObject()
-                Gameobject.tab = self.create_tab(obj)
-                code = self.path + "/scripts/" + obj + ".ty"
-                code = open(code, "r").read()
-                Gameobject.tab.insert(tk.INSERT, code)
+            self.tab = self.create_tab()
+            code = open(self.path + "/code.ty", "r").read()
+            self.tab.insert(tk.INSERT, code)
             self.objectSelectMenu["values"] = list(self.objects.keys())
             try:
                 self.currentObject.set(list(self.objects.keys())[0])
             except:
                 pass
             self.title.set(self.projectfile["name"])
+            self.showObjectDetails("")
         except Exception as e:
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
             messagebox.showerror(
-                message=f"Project Could not be open, Error: {e}", title="Error"
+                message=f"Project Could not be open, \nError: {e} \nOn Line: {exc_tb.tb_lineno}",
+                title="Error",
             )
             root.destroy()
 
@@ -721,9 +739,6 @@ class App:
         if self.path != None:
             project = {"name": self.title.get(), "objects": []}
             projectfile = self.path + "/project.tyro"
-            for file_path in os.listdir(self.path + "/scripts"):
-                print(file_path)
-                os.remove(self.path + "/scripts/"+ file_path)
             for obj in self.objects.keys():
                 Gameobject = self.objects[obj]
                 varbs = list(vars(Gameobject).items())
@@ -785,11 +800,11 @@ class App:
                             "color": Gameobject.color,
                         }
                     )
-                script = self.path + "/scripts/" + obj + ".ty"
-                script = open(script, "w")
-                code = self.objects[obj].tab.get("1.0", tk.END)
-                script.write(code)
-                script.close()
+            script = self.path + "/code.ty"
+            script = open(script, "w")
+            code = self.tab.get("1.0", tk.END)
+            script.write(code)
+            script.close()
             json.dump(project, open(projectfile, "w"), indent=4)
             proj = json.load(open("projects.json"))
             for i in proj:

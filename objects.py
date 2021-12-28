@@ -8,7 +8,6 @@ import os
 import random
 
 
-
 class Image:
     def __init__(
         self,
@@ -27,55 +26,60 @@ class Image:
         self.y = y
         self.id = str(id)
         self.scale = scale
-        self.name = image.split("/")[-1].split(".")[0] + "_" + str(id) if not loaded else image.split("/")[-1].split(".")[0]
+        self.name = (
+            image.split("/")[-1].split(".")[0] + "_" + str(id)
+            if not loaded
+            else image.split("/")[-1].split(".")[0]
+        )
         self.canvas = canvas
         self.ext = image.split("/")[-1].split(".")[-1]
         self.type = "image"
-        self.tab= None
-        self.currentDir
 
         file = self.name + "." + self.ext
         if loaded:
             self.currentDir = path
         elif path != None:
             self.currentDir = path + "/assets"
-            
-        shutil.copy(image, f"{self.currentDir}/{file}")
-        shutil.copy(image, f"{self.currentDir}/edited/{file}")
+        if not loaded:
+            shutil.copy(image, f"{self.currentDir}/{file}")
+            shutil.copy(image, f"{self.currentDir}/edited/{file}")
 
-        self.unedited = r"{self.currentDir}/{file}".format(currentDir=self.currentDir, file=file)
-        self.edited = r"{self.currentDir}/edited/{file}".format(
+        self.unedited = r"{currentDir}/{file}".format(
+            currentDir=self.currentDir, file=file
+        )
+        self.edited = r"{currentDir}/edited/{file}".format(
             currentDir=self.currentDir, file=file
         )
         openedImage = img.open(self.unedited)
         self.width, self.height = openedImage.size
         self.file = tk.PhotoImage(file=self.edited)
+        self.path = self.unedited
 
     def changeName(self, name, objects):
         if name not in objects.keys():
             self.name = name
             os.rename(
                 self.unedited,
-                r"{self.currentDir}/{name}.{ext}".format(
+                r"{currentDir}/{name}.{ext}".format(
                     currentDir=self.currentDir,
                     name=name,
                     ext=self.unedited.split("/")[-1].split(".")[-1],
                 ),
             )
-            self.unedited = r"{self.currentDir}/{name}.{ext}".format(
+            self.unedited = r"{currentDir}/{name}.{ext}".format(
                 currentDir=self.currentDir,
                 name=name,
                 ext=self.unedited.split("/")[-1].split(".")[-1],
             )
             os.rename(
                 self.edited,
-                r"{self.currentDir}/edited/{name}.{ext}".format(
+                r"{currentDir}/edited/{name}.{ext}".format(
                     currentDir=self.currentDir,
                     name=name,
                     ext=self.edited.split("/")[-1].split(".")[-1],
                 ),
             )
-            self.edited = r"{self.currentDir}/edited/{name}.{ext}".format(
+            self.edited = r"{currentDir}/edited/{name}.{ext}".format(
                 currentDir=self.currentDir,
                 name=name,
                 ext=self.edited.split("/")[-1].split(".")[-1],
@@ -126,6 +130,7 @@ class Image:
         os.remove(self.unedited)
         os.remove(self.edited)
 
+
 class Ellipse:
     def __init__(
         self,
@@ -148,7 +153,7 @@ class Ellipse:
         self.canvas = canvas
         self.scale = scale
         self.type = "ellipse"
-        self.tab= None
+        self.tab = None
         if name != "":
             self.name = name
         else:
@@ -198,6 +203,7 @@ class Ellipse:
     def delete(self):
         self.canvas.delete(self.canvasObject)
 
+
 class Rectangle:
     def __init__(
         self,
@@ -220,7 +226,7 @@ class Rectangle:
         self.canvas = canvas
         self.scale = scale
         self.type = "rectangle"
-        self.tab= None
+        self.tab = None
         if name != "":
             self.name = name
         else:
@@ -270,6 +276,7 @@ class Rectangle:
     def delete(self):
         self.canvas.delete(self.canvasObject)
 
+
 class Line:
     def __init__(
         self,
@@ -294,7 +301,7 @@ class Line:
         self.scale = scale
         self.thickness = thickness
         self.type = "line"
-        self.tab= None
+        self.tab = None
         if name != "":
             self.name = name
         else:
@@ -358,6 +365,7 @@ class Line:
     def delete(self):
         self.canvas.delete(self.canvasObject)
 
+
 class Text:
     def __init__(
         self,
@@ -377,7 +385,7 @@ class Text:
         self.id = id
         self.canvas = canvas
         self.type = "text"
-        self.tab= None
+        self.tab = None
         self.id = str(id)
         if name != "":
             self.name = name
