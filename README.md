@@ -1,4 +1,4 @@
-# Tyro Engine V1.1
+# Tyro Engine V1.2
 ### A Game Engine Designed For Kids
 
 <br>
