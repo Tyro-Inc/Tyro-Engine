@@ -2,12 +2,13 @@ import tkinter as tk
 from tkinter import ttk
 from objects import *
 from tkinter import filedialog, colorchooser, font, messagebox
-from tkinter.messagebox import askyesno
+from tkinter.messagebox import askyesno, askyesnocancel
 import random
 import json
 import shutil
 from time import sleep
-import sys, os
+import sys
+import os
 from interpreter import run, close
 
 path = None
@@ -151,7 +152,7 @@ class App:
 
         # initialize the canvas
         self.canvas = tk.Canvas(
-            root, width=400, height=400, borderwidth="2", relief="groove"
+            root, width=400, height=400, borderwidth="2", relief="groove", bg=self.config["editor"]["background"]
         )
         self.canvas.place(x=730, y=10)
 
@@ -173,25 +174,26 @@ class App:
 
         # Initialize the Top Bar
         self.titleLabel = tk.Label(
-            root, text="Title", font=(self.config["font"], 20), bg=self.config["label"]["background"]
-        ).place(x=47, y=22)
+            root, text="Project:", font=(self.config["font"], 20), bg=self.config["label"]["background"]
+        ).place(x=45, y=22)
         self.titleInput = tk.Entry(
             root, textvariable=self.title, font=(self.config["font"], 20)
         ).place(x=132, y=23, width=205, height=35)
-        
+
         self.objectSelectLabel = tk.Label(
             root,
             text="Objects",
             font=(self.config["font"], 20),
             bg=self.config["label"]["background"],
         ).place(x=780, y=420)
-        
+
         self.objectSelectMenu = ttk.Combobox(
             root, textvariable=self.currentObject, state="readonly"
         )
         self.objectSelectMenu.place(x=875, y=425, width=205, height=35)
         self.objectSelectMenu["values"] = list(self.objects.keys())
-        self.objectSelectMenu.bind("<<ComboboxSelected>>", self.showObjectDetails)
+        self.objectSelectMenu.bind(
+            "<<ComboboxSelected>>", self.showObjectDetails)
 
         self.runButton = tk.Button(
             self.root,
@@ -329,17 +331,32 @@ class App:
         self.menu.add_cascade(label="File", menu=self.filemenu)
         self.menu.add_cascade(label="Add Object", menu=self.addobjectmenu)
 
-        self.filemenu.add_command(label="Open", command=self.loadProject)
-        self.filemenu.add_command(label="Save", command=self.saveProject)
-        self.addobjectmenu.add_command(label="Image", command=self.addImage)
-        self.addobjectmenu.add_command(label="Rectangle", command=self.addRectangle)
-        self.addobjectmenu.add_command(label="Ellipse", command=self.addEllipse)
-        self.addobjectmenu.add_command(label="Line", command=self.addLine)
-        self.addobjectmenu.add_command(label="Text", command=self.addText)
+        self.filemenu.add_command(
+            label="Open", command=lambda: self.loadProject(""), accelerator="Ctrl+O")
+        self.filemenu.add_command(
+            label="Save", command=lambda: self.saveProject(""), accelerator="Ctrl+S")
+        self.addobjectmenu.add_command(
+            label="Image", command=lambda: self.addImage(""), accelerator="Ctrl+I")
+        self.addobjectmenu.add_command(
+            label="Rectangle", command=lambda: self.addRectangle(""), accelerator="Ctrl+R")
+        self.addobjectmenu.add_command(label="Ellipse", command=lambda: self.addEllipse(""), accelerator="Ctrl+E")
+        self.addobjectmenu.add_command(
+            label="Line", command=lambda: self.addLine(""), accelerator="Ctrl+L")
+        self.addobjectmenu.add_command(
+            label="Text", command=lambda: self.addText(""), accelerator="Ctrl+T")
+
+        self.root.bind("<Control-o>", self.loadProject)
+        self.root.bind("<Control-s>", self.saveProject)
+        self.root.bind("<Control-i>", self.addImage)
+        self.root.bind("<Control-r>", self.addRectangle)
+        self.root.bind("<Control-e>", self.addEllipse)
+        self.root.bind("<Control-l>", self.addLine)
+        self.root.bind("<Control-t>", self.addText)
+        root.protocol("WM_DELETE_WINDOW", self.remindToSave)
 
     def execute(self):
         try:
-            self.saveProject()
+            self.saveProject("")
             code = open(self.path + "/code.ty", "r").read()
             run(self.objects, code)
             close()
@@ -410,7 +427,8 @@ class App:
                 Gameobject.changeWidth(float(self.propwidth.get()))
                 Gameobject.changeHeight(float(self.propheight.get()))
                 Gameobject.changeScale(float(self.propscale.get()))
-            Gameobject.changeName(self.propname.get().replace(" ", ""), self.objects)
+            Gameobject.changeName(
+                self.propname.get().replace(" ", ""), self.objects)
             if Gameobject.type == "image":
                 self.root.image = Gameobject.file
                 Gameobject.createCanvasImage()
@@ -421,7 +439,7 @@ class App:
             self.objectSelectMenu["values"] = list(self.objects.keys())
             self.currentObject.set(Gameobject.name)
 
-    def addImage(self):
+    def addImage(self, arg):
         """
         Ask the user to select an image and then adds it to the project
         also adds the image to the objectSelectMenu and creates a new tab for the image
@@ -435,12 +453,13 @@ class App:
             ID = str(random.randint(1000, 10000))
             imgname = image.split("/")[-1]
             imgname = f"{imgname.split('.')[0]}_{ID}"
-            self.objects[imgname] = Image(ID, image, self.canvas, path=self.path)
+            self.objects[imgname] = Image(
+                ID, image, self.canvas, path=self.path)
             self.root.image = self.objects[imgname].file
             self.objects[imgname].createCanvasImage()
             self.newObject(imgname)
 
-    def addRectangle(self):
+    def addRectangle(self, arg):
         """
         Creates a new rectangle object and adds it to the project
         also adds the Rectangle to the objectSelectMenu and creates a new tab for the Rectangle
@@ -450,7 +469,7 @@ class App:
         self.objects["rectangle_" + str(ID)].createCanvasObject()
         self.newObject("rectangle_" + str(ID))
 
-    def addEllipse(self):
+    def addEllipse(self, arg):
         """
         Creates a new Ellipse object and adds it to the project
         also adds the Ellipse to the objectSelectMenu and creates a new tab for the Ellipse
@@ -460,7 +479,7 @@ class App:
         self.objects["ellipse_" + str(ID)].createCanvasObject()
         self.newObject("ellipse_" + str(ID))
 
-    def addLine(self):
+    def addLine(self, arg):
         """
         Creates a new Line object and adds it to the project
         also adds the Line to the objectSelectMenu and creates a new tab for the Line
@@ -470,7 +489,7 @@ class App:
         self.objects["line_" + str(ID)].createCanvasObject()
         self.newObject("line_" + str(ID))
 
-    def addText(self):
+    def addText(self, arg):
         """
         Creates a new Text object and adds it to the project
         also adds the Text to the objectSelectMenu and creates a new tab for the Text
@@ -490,7 +509,8 @@ class App:
             Gameobject.delete()
             del self.objects[Gameobject.name]
             try:
-                self.currentObject.set(self.objects[list(self.objects.keys())[0]].name)
+                self.currentObject.set(
+                    self.objects[list(self.objects.keys())[0]].name)
             except:
                 self.currentObject.set("")
             self.objectSelectMenu["values"] = list(self.objects.keys())
@@ -508,7 +528,7 @@ class App:
                 return None
             self.propwindow = tk.Toplevel(self.root)
             self.propwindow.title("Properties")
-            self.propwindow.geometry("400x300")
+            self.propwindow.geometry("400x330")
             self.propwindow.resizable(0, 0)
             self.propwindow.config(bg=self.config["editor"]["background"])
             self.propwindow.transient(self.root)
@@ -529,16 +549,24 @@ class App:
                 justify=tk.CENTER,
             )
             self.propwintitle.place(x=0, y=30, width=400)
-            self.colorPicker = tk.Button(
+            self.colorpickerLabel = tk.Label(
                 self.propwindow,
                 text="Color",
+                bg=self.config["editor"]["background"],
+                font=(self.config["font"], 15),
+            ).place(x=95, y=80)
+
+            self.colorPicker = tk.Button(
+                self.propwindow,
+                text="Pick",
                 command=self.showColorPicker,
                 bg=self.config["editor"]["background"],
                 font=(self.config["font"], 15),
             )
             self.colorPicker.place(x=205, y=75, width=100, height=30)
             if Gameobject.type == "rectangle" or Gameobject.type == "ellipse":
-                self.propwinupdatebutton.place(x=125, y=135, width=150, height=40)
+                self.propwinupdatebutton.place(
+                    x=125, y=135, width=150, height=40)
             if Gameobject.type == "line":
                 self.textthicknesslabel = tk.Label(
                     self.propwindow,
@@ -554,7 +582,8 @@ class App:
                 )
                 self.textthickness.place(x=220, y=130, width=100, height=30)
                 self.textthickness.insert(0, Gameobject.thickness)
-                self.propwinupdatebutton.place(x=125, y=185, width=150, height=40)
+                self.propwinupdatebutton.place(
+                    x=125, y=185, width=150, height=40)
             if Gameobject.type == "text":
                 self.textfontlabel = tk.Label(
                     self.propwindow,
@@ -597,8 +626,11 @@ class App:
                     bg=self.config["editor"]["background"],
                     font=(self.config["font"], 15),
                 )
+                self.text.delete(0, "end")
+                self.text.insert(0, Gameobject.text)
                 self.text.place(x=220, y=210, width=100, height=30)
-                self.propwinupdatebutton.place(x=125, y=285, width=150, height=40)
+                self.propwinupdatebutton.place(
+                    x=125, y=275, width=150, height=40)
 
     def showColorPicker(self):
         """
@@ -620,7 +652,8 @@ class App:
             if thickness != "":
                 if thickness.isdigit():
                     if int(thickness) > 0:
-                        Gameobject.changeThickness(int(self.textthickness.get()))
+                        Gameobject.changeThickness(
+                            int(self.textthickness.get()))
         if Gameobject.type == "text":
             font = self.font.get()
             size = self.textsize.get()
@@ -634,12 +667,12 @@ class App:
 
         self.propwindow.destroy()
 
-    def loadProject(self):
+    def loadProject(self, arg):
         """
         Loads a project from a folder
         """
         confirm = messagebox.askyesno(
-            message="all the contents of the current project will be deleted",
+            message="all the contents of the current project will be deleted if not saved",
             title="Are you sure?",
         )
         if confirm:
@@ -650,7 +683,8 @@ class App:
     def loadProjectFunc(self, path):
         self.path = path
         try:
-            self.projectfile = json.load(open(self.path + "/project.tyro", "r"))
+            self.projectfile = json.load(
+                open(self.path + "/project.tyro", "r"))
             for obj in self.projectfile["objects"]:
                 if obj["type"] == "rectangle":
                     self.objects[obj["name"]] = Rectangle(
@@ -743,7 +777,7 @@ class App:
             )
             root.destroy()
 
-    def saveProject(self):
+    def saveProject(self, arg):
         """
         saves loaded projects
         """
@@ -824,6 +858,19 @@ class App:
                     i = {"name": self.title.get(), "path": self.path}
                     proj.append(i)
             json.dump(proj, open("projects.json", "w"), indent=4)
+
+    def remindToSave(self):
+        response = messagebox.askyesnocancel(
+            title="Save Project",
+            message="Do you want to save the project?",
+        )
+        if response == True:
+            self.saveProject("")
+            root.destroy()
+        elif response == False:
+            root.destroy()
+        else:
+            pass
 
 
 if __name__ == "__main__":
