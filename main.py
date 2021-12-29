@@ -54,6 +54,7 @@ class ProjectManager:
             font=(self.config["font"], 12),
             command=self.newproject,
             bg=self.config["buttons"]["background"],
+            fg=self.config["buttons"]["text"],
         )
         self.newProjectButton.place(x=276, y=200, width=161, height=25)
         self.newProjectName = tk.StringVar()
@@ -69,14 +70,15 @@ class ProjectManager:
             root,
             text="Open Project",
             font=(self.config["font"], 12),
-            bg=self.config["buttons"]["background"],
             command=self.openProject,
+            bg=self.config["buttons"]["background"],
+            fg=self.config["buttons"]["text"],
         )
         self.openProjectButton.place(x=90, y=200, width=161, height=25)
         self.projectList = tk.Listbox(
             root,
             font=(self.config["font"], 12),
-            bg=self.config["buttons"]["background"],
+            bg=self.config["editor"]["background"],
         )
         self.projectList.place(x=55, y=245, width=890, height=200)
         self.projectList.insert(tk.END, *self.projects)
@@ -116,8 +118,8 @@ class App:
     def __init__(self, root, path):
         # Initialize the root window
         root.title("Tyro Engine")
-        width = 1440
-        height = 724
+        width = 1152
+        height = 648
         screenwidth = root.winfo_screenwidth()
         screenheight = root.winfo_screenheight()
         alignstr = "%dx%d+%d+%d" % (
@@ -137,13 +139,13 @@ class App:
         # Initialize the editor frame
         self.editor = tk.Frame(
             root,
-            width=950,
-            height=620,
+            width=690,
+            height=445,
             borderwidth="2",
             relief="groove",
             bg=self.config["editor"]["background"],
         )
-        self.editor.place(x=20, y=80)
+        self.editor.place(x=20, y=75)
         self.objects = {}
         self.root = root
 
@@ -151,7 +153,7 @@ class App:
         self.canvas = tk.Canvas(
             root, width=400, height=400, borderwidth="2", relief="groove"
         )
-        self.canvas.place(x=1000, y=20)
+        self.canvas.place(x=730, y=10)
 
         # properties variables
         self.propname = tk.StringVar()
@@ -170,15 +172,25 @@ class App:
         self.title.set("Untitled")
 
         # Initialize the Top Bar
+        self.titleLabel = tk.Label(
+            root, text="Title", font=(self.config["font"], 20), bg=self.config["label"]["background"]
+        ).place(x=47, y=22)
         self.titleInput = tk.Entry(
             root, textvariable=self.title, font=(self.config["font"], 20)
-        )
-        self.titleInput.place(x=225, y=25, width=320, height=35)
+        ).place(x=132, y=23, width=205, height=35)
+        
+        self.objectSelectLabel = tk.Label(
+            root,
+            text="Objects",
+            font=(self.config["font"], 20),
+            bg=self.config["label"]["background"],
+        ).place(x=780, y=420)
+        
         self.objectSelectMenu = ttk.Combobox(
             root, textvariable=self.currentObject, state="readonly"
         )
+        self.objectSelectMenu.place(x=875, y=425, width=205, height=35)
         self.objectSelectMenu["values"] = list(self.objects.keys())
-        self.objectSelectMenu.place(x=20, y=25, width=200, height=35)
         self.objectSelectMenu.bind("<<ComboboxSelected>>", self.showObjectDetails)
 
         self.runButton = tk.Button(
@@ -187,8 +199,7 @@ class App:
             font=(self.config["font"], 20),
             bg=self.config["buttons"]["background"],
             command=self.execute,
-        )
-        self.runButton.place(x=580, y=25, width=135, height=35)
+        ).place(x=560, y=15, width=100, height=52)
 
         # Initialize the properties section
         self.propnamelabel = tk.Label(
@@ -197,14 +208,14 @@ class App:
             font=(self.config["font"], 20),
             bg=self.config["label"]["background"],
         )
-        self.propnamelabel.place(x=1045, y=432)
+        self.propnamelabel.place(x=168, y=535)
         self.propnameinput = tk.Entry(
             self.root,
             textvariable=self.propname,
             font=(self.config["font"], 20),
             bg=self.config["input"]["background"],
         )
-        self.propnameinput.place(x=1165, y=432, width=200, height=40)
+        self.propnameinput.place(x=270, y=535, width=205, height=35)
 
         self.propxlabel = tk.Label(
             self.root,
@@ -212,14 +223,14 @@ class App:
             font=(self.config["font"], 20),
             bg=self.config["label"]["background"],
         )
-        self.propxlabel.place(x=1110, y=490)
+        self.propxlabel.place(x=180, y=590)
         self.propxinput = tk.Entry(
             self.root,
             textvariable=self.propx,
             font=(self.config["font"], 20),
             bg=self.config["input"]["background"],
         )
-        self.propxinput.place(x=1140, y=490, width=60, height=40)
+        self.propxinput.place(x=210, y=590, width=60, height=36)
 
         self.propylabel = tk.Label(
             self.root,
@@ -227,14 +238,14 @@ class App:
             font=(self.config["font"], 20),
             bg=self.config["label"]["background"],
         )
-        self.propylabel.place(x=1260, y=490)
+        self.propylabel.place(x=330, y=590)
         self.propyinput = tk.Entry(
             self.root,
             textvariable=self.propy,
             font=(self.config["font"], 20),
             bg=self.config["input"]["background"],
         )
-        self.propyinput.place(x=1290, y=490, width=60, height=40)
+        self.propyinput.place(x=355, y=590, width=60, height=40)
 
         self.propwidthlabel = tk.Label(
             self.root,
@@ -242,14 +253,14 @@ class App:
             font=(self.config["font"], 18),
             bg=self.config["label"]["background"],
         )
-        self.propwidthlabel.place(x=1060, y=540)
+        self.propwidthlabel.place(x=485, y=535)
         self.propwidthinput = tk.Entry(
             self.root,
             textvariable=self.propwidth,
             font=(self.config["font"], 20),
             bg=self.config["input"]["background"],
         )
-        self.propwidthinput.place(x=1140, y=540, width=60, height=40)
+        self.propwidthinput.place(x=560, y=535, width=60, height=35)
 
         self.propheightlabel = tk.Label(
             self.root,
@@ -257,14 +268,14 @@ class App:
             font=(self.config["font"], 18),
             bg=self.config["label"]["background"],
         )
-        self.propheightlabel.place(x=1205, y=540)
+        self.propheightlabel.place(x=630, y=535)
         self.propheightinput = tk.Entry(
             self.root,
             textvariable=self.propheight,
             font=(self.config["font"], 20),
             bg=self.config["input"]["background"],
         )
-        self.propheightinput.place(x=1290, y=540, width=60, height=40)
+        self.propheightinput.place(x=710, y=535, width=60, height=35)
 
         self.propscalelabel = tk.Label(
             self.root,
@@ -272,14 +283,14 @@ class App:
             font=(self.config["font"], 18),
             bg=self.config["label"]["background"],
         )
-        self.propscalelabel.place(x=1070, y=600)
+        self.propscalelabel.place(x=460, y=590)
         self.propscaleinput = tk.Entry(
             self.root,
             textvariable=self.propscale,
             font=(self.config["font"], 20),
             bg=self.config["input"]["background"],
         )
-        self.propscaleinput.place(x=1140, y=600, width=60, height=40)
+        self.propscaleinput.place(x=530, y=590, width=60, height=35)
 
         self.propbutton = tk.Button(
             self.root,
@@ -288,7 +299,7 @@ class App:
             font=(self.config["font"], 20),
             bg=self.config["buttons"]["background"],
         )
-        self.propbutton.place(x=1212, y=600, width=150, height=40)
+        self.propbutton.place(x=835, y=535, width=150, height=40)
 
         self.propupdatebutton = tk.Button(
             self.root,
@@ -297,7 +308,7 @@ class App:
             command=self.updateObject,
             bg=self.config["buttons"]["background"],
         )
-        self.propupdatebutton.place(x=1050, y=650, width=150, height=40)
+        self.propupdatebutton.place(x=620, y=590, width=150, height=40)
 
         self.propdeletebutton = tk.Button(
             self.root,
@@ -306,7 +317,7 @@ class App:
             command=self.deleteObject,
             bg=self.config["buttons"]["background"],
         )
-        self.propdeletebutton.place(x=1212, y=650, width=150, height=40)
+        self.propdeletebutton.place(x=835, y=585, width=150, height=40)
 
         # Initialize the Menu bar
         self.menu = tk.Menu(root)
@@ -345,12 +356,12 @@ class App:
         """
         tab = tk.Text(
             self.root,
-            width=950,
-            height=620,
-            font=("consolas", 20),
+            width=690,
+            height=445,
+            font=("consolas", 15),
             bg=self.config["editor"]["background"],
         )
-        tab.place(x=20, y=80, width=950, height=620)
+        tab.place(x=20, y=75, width=690, height=445)
         return tab
 
     def newObject(self, name):

@@ -1,4 +1,4 @@
-# Tyro Engine V0.1
+# Tyro Engine V1.1
 ## A Game Engine Designed For Kids
 
 <br>
@@ -14,4 +14,4 @@
 <br>
 
 # How to use Tyro Engine?
-## Tyro uses a programming language with a simple syntax. The syntax is very similar to BASIC. It can be written inside the Engine. 
+## Tyro uses Python as a scripting language. THere are some very basic commands that you can use to make your game.

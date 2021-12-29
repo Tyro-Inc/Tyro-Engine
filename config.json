@@ -1,21 +1,21 @@
 {
-    "background": "#e9c46a",
-    "text": "#e9c46a",
+    "background": "#76BDFF",
+    "text": "#000000",
     "font": "Acme",
     "buttons":{
-        "background": "#f4a261",
-        "text": "#e9c46a"
+        "background": "#FFB800",
+        "text": "#ffffff"
     },
     "editor":{
-        "background": "#f4a261",
-        "text": "#e9c46a"
+        "background": "#ffffff",
+        "text": "#000000"
     },
     "label":{
-        "background": "#e9c46a",
-        "text": "#e9c46a"
+        "background": "#76BDFF",
+        "text": "#000000"
     },
     "input":{
-        "background": "#e76f51",
-        "text": "#e9c46a"
+        "background": "#ffffff",
+        "text": "#000000"
     }
 }
