@@ -57,7 +57,7 @@ class ProjectManager:
             bg=self.config["buttons"]["background"],
             fg=self.config["buttons"]["text"],
         )
-        self.newProjectButton.place(x=276, y=200, width=161, height=25)
+        self.newProjectButton.place(x=795, y=455, width=160, height=25)
         self.newProjectName = tk.StringVar()
         self.newProjectName.set("New Project")
         self.newProjectNameEntry = tk.Entry(
@@ -66,7 +66,7 @@ class ProjectManager:
             font=(self.config["font"], 12),
             bg=self.config["input"]["background"],
         )
-        self.newProjectNameEntry.place(x=445, y=200, width=460, height=25)
+        self.newProjectNameEntry.place(x=55, y=455, width=725, height=25)
         self.openProjectButton = tk.Button(
             root,
             text="Open Project",
@@ -75,13 +75,31 @@ class ProjectManager:
             bg=self.config["buttons"]["background"],
             fg=self.config["buttons"]["text"],
         )
-        self.openProjectButton.place(x=90, y=200, width=161, height=25)
+        self.openProjectButton.place(x=795, y=175, width=160, height=25)
+        self.deleteProjectButton = tk.Button(
+            root,
+            text="Delete Project",
+            font=(self.config["font"], 12),
+            command=self.deleteProject,
+            bg=self.config["buttons"]["background"],
+            fg=self.config["buttons"]["text"],
+        )
+        self.deleteProjectButton.place(x=795, y=215, width=160, height=25)        
+        self.addProjectButton = tk.Button(
+            root,
+            text="Add Project",
+            font=(self.config["font"], 12),
+            command=self.addProject,
+            bg=self.config["buttons"]["background"],
+            fg=self.config["buttons"]["text"],
+        )
+        self.addProjectButton.place(x=795, y=255, width=160, height=25)
         self.projectList = tk.Listbox(
             root,
             font=(self.config["font"], 12),
             bg=self.config["editor"]["background"],
         )
-        self.projectList.place(x=55, y=245, width=890, height=200)
+        self.projectList.place(x=55, y=175, width=725, height=270)
         self.projectList.insert(tk.END, *self.projects)
 
     def newproject(self):
@@ -109,11 +127,43 @@ class ProjectManager:
             root.destroy()
 
     def openProject(self):
-        proj = self.projectList.get(self.projectList.curselection())
-        self.path = proj.split(" |/| ")[1]
-        if os.path.isdir(self.path):
-            root.destroy()
-
+        try:
+            proj = self.projectList.get(self.projectList.curselection())
+            self.path = proj.split(" |/| ")[1]
+            if os.path.isdir(self.path):
+                root.destroy()
+        except:
+            messagebox.showerror("Error", "Invalid project file")
+    def deleteProject(self):
+        try:
+            proj = self.projectList.get(self.projectList.curselection())
+            path = proj.split(" |/| ")
+            proj ={"name": path[0], "path": path[1]}
+            projs = json.load(open("projects.json"))
+            projs.remove(proj)
+            json.dump(projs, open("projects.json", "w"))
+            self.projectList.delete(self.projectList.curselection())
+        except:
+            messagebox.showerror("Error", "Invalid project file")
+    
+    def addProject(self):
+        directory = filedialog.askdirectory(
+            initialdir="/",
+            title="Select directory",
+            mustexist=True,
+        )
+        if directory != "":
+            if os.path.exists(directory + "/project.tyro") and os.path.exists(directory + "/code.ty"):
+                try:
+                    proj = json.load(open(directory + "/project.tyro"))
+                    name = proj["name"]
+                    self.projectList.insert(tk.END, name + " |/| " + directory)
+                    proj = {"name": name, "path": directory}
+                    projs = json.load(open("projects.json"))
+                    projs.append(proj)
+                    json.dump(projs, open("projects.json", "w"))
+                except:
+                    messagebox.showerror("Error", "Invalid project file")
 
 class App:
     def __init__(self, root, path):
@@ -199,6 +249,7 @@ class App:
             self.root,
             text="Run",
             font=(self.config["font"], 20),
+            fg=self.config["buttons"]["text"],
             bg=self.config["buttons"]["background"],
             command=self.execute,
         ).place(x=560, y=15, width=100, height=52)
@@ -299,6 +350,7 @@ class App:
             text="Properties",
             command=self.showPropertiesWindow,
             font=(self.config["font"], 20),
+            fg=self.config["buttons"]["text"],
             bg=self.config["buttons"]["background"],
         )
         self.propbutton.place(x=835, y=535, width=150, height=40)
@@ -308,6 +360,7 @@ class App:
             text="Update",
             font=(self.config["font"], 20),
             command=self.updateObject,
+            fg=self.config["buttons"]["text"],
             bg=self.config["buttons"]["background"],
         )
         self.propupdatebutton.place(x=620, y=590, width=150, height=40)
@@ -317,6 +370,7 @@ class App:
             text="Delete",
             font=(self.config["font"], 20),
             command=self.deleteObject,
+            fg=self.config["buttons"]["text"],
             bg=self.config["buttons"]["background"],
         )
         self.propdeletebutton.place(x=835, y=585, width=150, height=40)
@@ -530,7 +584,7 @@ class App:
             self.propwindow.title("Properties")
             self.propwindow.geometry("400x330")
             self.propwindow.resizable(0, 0)
-            self.propwindow.config(bg=self.config["editor"]["background"])
+            self.propwindow.config(bg=self.config["background"])
             self.propwindow.transient(self.root)
             self.propwindow.grab_set()
             self.propwindow.focus_set()
@@ -538,21 +592,22 @@ class App:
                 self.propwindow,
                 text="Update",
                 command=self.propWinUpdateObject,
-                bg=self.config["editor"]["background"],
+                bg=self.config["buttons"]["background"],
+                fg=self.config["buttons"]["text"],
                 font=(self.config["font"], 15),
             )
             self.propwintitle = tk.Label(
                 self.propwindow,
                 text=f"{GameobjectName} Properties",
                 font=(self.config["font"], 20),
-                bg=self.config["editor"]["background"],
+                bg=self.config["label"]["background"],
                 justify=tk.CENTER,
             )
             self.propwintitle.place(x=0, y=30, width=400)
             self.colorpickerLabel = tk.Label(
                 self.propwindow,
                 text="Color",
-                bg=self.config["editor"]["background"],
+                bg=self.config["label"]["background"],
                 font=(self.config["font"], 15),
             ).place(x=95, y=80)
 
@@ -560,7 +615,8 @@ class App:
                 self.propwindow,
                 text="Pick",
                 command=self.showColorPicker,
-                bg=self.config["editor"]["background"],
+                bg=self.config["buttons"]["background"],
+                fg=self.config["buttons"]["text"],
                 font=(self.config["font"], 15),
             )
             self.colorPicker.place(x=205, y=75, width=100, height=30)
@@ -571,13 +627,13 @@ class App:
                 self.textthicknesslabel = tk.Label(
                     self.propwindow,
                     text="Thickness",
-                    bg=self.config["editor"]["background"],
+                    bg=self.config["label"]["background"],
                     font=(self.config["font"], 15),
                 )
                 self.textthicknesslabel.place(x=82, y=132)
                 self.textthickness = tk.Entry(
                     self.propwindow,
-                    bg=self.config["editor"]["background"],
+                    bg=self.config["input"]["background"],
                     font=(self.config["font"], 15),
                 )
                 self.textthickness.place(x=220, y=130, width=100, height=30)
@@ -588,7 +644,7 @@ class App:
                 self.textfontlabel = tk.Label(
                     self.propwindow,
                     text="Font",
-                    bg=self.config["editor"]["background"],
+                    bg=self.config["label"]["background"],
                     font=(self.config["font"], 15),
                 )
                 self.textfontlabel.place(x=82, y=132)
@@ -602,7 +658,7 @@ class App:
                 self.textfont.place(x=220, y=130, width=100, height=30)
                 self.textsize = tk.Entry(
                     self.propwindow,
-                    bg=self.config["editor"]["background"],
+                    bg=self.config["input"]["background"],
                     font=(self.config["font"], 15),
                 )
                 self.textsize.place(x=220, y=170, width=100, height=30)
@@ -610,20 +666,20 @@ class App:
                 self.textsizelabel = tk.Label(
                     self.propwindow,
                     text="Size",
-                    bg=self.config["editor"]["background"],
+                    bg=self.config["label"]["background"],
                     font=(self.config["font"], 15),
                 )
                 self.textsizelabel.place(x=82, y=170)
                 self.textLabel = tk.Label(
                     self.propwindow,
                     text="Text",
-                    bg=self.config["editor"]["background"],
+                    bg=self.config["label"]["background"],
                     font=(self.config["font"], 15),
                 )
                 self.textLabel.place(x=82, y=210)
                 self.text = tk.Entry(
                     self.propwindow,
-                    bg=self.config["editor"]["background"],
+                    bg=self.config["input"]["background"],
                     font=(self.config["font"], 15),
                 )
                 self.text.delete(0, "end")
