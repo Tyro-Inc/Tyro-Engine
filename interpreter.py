@@ -11,10 +11,15 @@ WHITE = (255, 255, 255)
 
 class Object:
     def __init__(self, **kwargs):
-        self.__dict__.update(kwargs)
+        args = kwargs
+        args.pop("canvas")
+        args.pop('canvasObject')
+        self.__dict__.update(args)
         if self.type != "text":
             self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
-
+        self.__screen = self.screen
+        self.screen = None
+        
     def __repr__(self):
         return str(self.__dict__)
 
@@ -70,12 +75,12 @@ class Object:
                 self.x, self.y, self.width * self.scale, self.height * self.scale
             )
             if self.type == "rectangle":
-                self.obj = pygame.draw.rect(self.screen, self.color, self.rect)
+                self.obj = pygame.draw.rect(self.__screen, self.color, self.rect)
             elif self.type == "ellipse":
-                self.obj = pygame.draw.ellipse(self.screen, self.color, self.rect)
+                self.obj = pygame.draw.ellipse(self.__screen, self.color, self.rect)
             elif self.type == "line":
                 self.obj = pygame.draw.line(
-                    self.screen,
+                    self.__screen,
                     self.color,
                     (int(self.x), int(self.y)),
                     (
@@ -89,13 +94,13 @@ class Object:
                 self.obj = pygame.transform.scale(
                     self.obj, (self.width * self.scale, self.height * self.scale)
                 )
-                self.screen.blit(self.obj, (self.x, self.y))
+                self.__screen.blit(self.obj, (self.x, self.y))
         else:
             self.font_ = pygame.font.SysFont(self.font, self.size)
             text = self.font_.render(self.text, True, self.color)
             rect = text.get_rect()
             rect.center = (self.x, self.y)
-            self.screen.blit(text, rect)
+            self.__screen.blit(text, rect)
 
 
 def run(objects, code):
