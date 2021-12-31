@@ -1,5 +1,5 @@
 # Tyro Engine V1.2
-### A Game Engine Designed For Kids
+### A Game Engine Designed Specifically For Beginners
 
 <br>
 
