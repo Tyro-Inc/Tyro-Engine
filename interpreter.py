@@ -1,12 +1,17 @@
 import pygame
 from random import randint as random
 from time import sleep as delay
+from dataclasses import dataclass
 import keyboard
 WIDTH = 400
 HEIGHT = 400
 FPS = 60
 WHITE = (255, 255, 255)
 
+@dataclass
+class MousePos:
+    x: float
+    y: float
 
 class Object:
     def __init__(self, **kwargs):
@@ -114,7 +119,8 @@ def isColliding(obj1, obj2):
 
 
 def mousePos():
-    return list(pygame.mouse.get_pos())
+    mousePosList = MousePos(pygame.mouse.get_pos().x, pygame.mouse.get_pos().y)
+    return mousePosList
 
 
 glob = {"isKey": isKey, "isColliding": isColliding, "random": random,
