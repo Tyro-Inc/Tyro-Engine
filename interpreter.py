@@ -2,7 +2,6 @@ import pygame
 from random import randint as random
 from time import sleep as delay
 import keyboard
-
 WIDTH = 400
 HEIGHT = 400
 FPS = 60
@@ -103,31 +102,6 @@ class Object:
             self.__screen.blit(text, rect)
 
 
-def run(objects, code):
-    pygame.init()
-    screen = pygame.display.set_mode((WIDTH, HEIGHT))
-    pygame.display.set_caption("Tyro Game Engine Preview")
-    clock = pygame.time.Clock()
-    running = True
-    init = True
-    for obj in objects.keys():
-        objects[obj].screen = screen
-        exec(f"{obj} = Object(**objects[obj].__dict__)")
-    while running:
-        clock.tick(FPS)
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-        screen.fill(WHITE)
-        exec(code)
-        if init:
-            init = False
-        for obj in objects.keys():
-            exec(f"{obj}.update()")
-        pygame.display.flip()
-    pygame.quit()
-
-
 def isKey(key):
     return keyboard.is_pressed(key)
 
@@ -135,6 +109,45 @@ def isKey(key):
 def isColliding(obj1, obj2):
     return obj1.rect.colliderect(obj2.rect)
 
+def mousePos():
+    return list(pygame.mouse.get_pos())
 
-def close():
+glob = {"isKey": isKey, "isColliding": isColliding, "random": random, 
+        "delay": delay, "mousePos": mousePos}
+
+def run(objects, code):
+    pygame.init()
+    screen = pygame.display.set_mode((WIDTH, HEIGHT))
+    pygame.display.set_caption("Tyro Game Engine Preview")
+    clock = pygame.time.Clock()
+    running = True
+    init = True
+    
+    
+    for obj in objects.keys():
+        objects[obj].screen = screen
+        exec(f"{obj} = Object(**objects[obj].__dict__)")
+    objects = list(objects.keys())
+    
+    global glob
+    for i in dir():
+        exec(f"glob['{i}'] = {i}") if i not in ["clock", "obj", "screen", "code", 
+                                            "objects", "objs", "running"] else None
+    print(glob.keys())
+    
+    while running:
+        clock.tick(FPS)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+        screen.fill(WHITE)
+        if not init:
+            glob['init'] = False
+        exec(code, glob)
+        if init:
+            init = False
+        for obj in objects:
+            exec(f"{obj}.update()")
+        pygame.display.flip()
     pygame.quit()
+

@@ -9,7 +9,8 @@ import shutil
 from time import sleep
 import sys
 import os
-from interpreter import run, close
+from interpreter import run
+import pygame
 
 path = None
 
@@ -413,13 +414,13 @@ class App:
             self.saveProject("")
             code = open(self.path + "/code.ty", "r").read()
             run(self.objects, code)
-            close()
+            pygame.quit()
         except Exception as e:
             messagebox.showerror(
                 message=f"Error during execution, \nError: {e}",
                 title="Error",
             )
-            close()
+            pygame.quit()
 
     def create_tab(self):
         """
