@@ -13,7 +13,7 @@ from interpreter import run
 import pygame
 
 path = None
-
+version = "1.3"
 
 class ProjectManager:
     def __init__(self, root):
@@ -116,7 +116,8 @@ class ProjectManager:
             self.path = path
             os.mkdir(path + "/assets")
             os.mkdir(path + "/assets/edited")
-            project = {"name": self.newProjectName.get(), "objects": []}
+            global version
+            project = {"name": self.newProjectName.get(), "version": version, "objects": []}
             json.dump(project, open(path + "/project.tyro", "w"))
             proj = {"name": self.newProjectName.get(), "path": path}
 
@@ -131,8 +132,16 @@ class ProjectManager:
         try:
             proj = self.projectList.get(self.projectList.curselection())
             self.path = proj.split(" |/| ")[1]
-            if os.path.isdir(self.path):
-                root.destroy()
+            proj = json.load(open(self.path + "/project.tyro"))
+            global version
+            try:
+                pversion = proj["version"]
+                if pversion != version:
+                    messagebox.showerror("Error", "Project version is not compatible")
+                elif os.path.isdir(self.path):
+                    root.destroy()
+            except:
+                messagebox.showerror("Error", "Project version is not compatible")
         except:
             messagebox.showerror("Error", "Invalid project file")
     def deleteProject(self):
@@ -158,6 +167,15 @@ class ProjectManager:
                 try:
                     proj = json.load(open(directory + "/project.tyro"))
                     name = proj["name"]
+                    global version
+                    try:
+                        pversion = proj["version"]
+                        if pversion.split(".")[:-1] != version.split(".")[:-1]:
+                            messagebox.showerror("Error", "Project version is not compatible")
+                            root.destroy()
+                    except:
+                        messagebox.showerror("Error", "Project version is not compatible")
+                        root.destroy()
                     self.projectList.insert(tk.END, name + " |/| " + directory)
                     proj = {"name": name, "path": directory}
                     projs = json.load(open("projects.json"))
@@ -752,6 +770,17 @@ class App:
         try:
             self.projectfile = json.load(
                 open(self.path + "/project.tyro", "r"))
+            global version
+            try:
+                if self.projectfile["version"] != version:
+                    messagebox.showerror(
+                        title="Error", message="Project version is not compatible")
+                    return None
+            except:
+                messagebox.showerror(
+                    title="Error", message="Project version is not compatible")
+                return None
+                
             for obj in self.projectfile["objects"]:
                 if obj["type"] == "rectangle":
                     self.objects[obj["name"]] = Rectangle(
@@ -849,7 +878,8 @@ class App:
         saves loaded projects
         """
         if self.path != None:
-            project = {"name": self.title.get(), "objects": []}
+            global version
+            project = {"name": self.title.get(), "version": version, "objects": []}
             projectfile = self.path + "/project.tyro"
             for obj in self.objects.keys():
                 Gameobject = self.objects[obj]
