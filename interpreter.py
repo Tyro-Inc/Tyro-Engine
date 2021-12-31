@@ -18,7 +18,7 @@ class Object:
             self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
         self.__screen = self.screen
         self.screen = None
-        
+
     def __repr__(self):
         return str(self.__dict__)
 
@@ -74,9 +74,11 @@ class Object:
                 self.x, self.y, self.width * self.scale, self.height * self.scale
             )
             if self.type == "rectangle":
-                self.obj = pygame.draw.rect(self.__screen, self.color, self.rect)
+                self.obj = pygame.draw.rect(
+                    self.__screen, self.color, self.rect)
             elif self.type == "ellipse":
-                self.obj = pygame.draw.ellipse(self.__screen, self.color, self.rect)
+                self.obj = pygame.draw.ellipse(
+                    self.__screen, self.color, self.rect)
             elif self.type == "line":
                 self.obj = pygame.draw.line(
                     self.__screen,
@@ -91,7 +93,8 @@ class Object:
             elif self.type == "image":
                 self.obj = pygame.image.load(self.path)
                 self.obj = pygame.transform.scale(
-                    self.obj, (self.width * self.scale, self.height * self.scale)
+                    self.obj, (self.width * self.scale,
+                               self.height * self.scale)
                 )
                 self.__screen.blit(self.obj, (self.x, self.y))
         else:
@@ -109,11 +112,14 @@ def isKey(key):
 def isColliding(obj1, obj2):
     return obj1.rect.colliderect(obj2.rect)
 
+
 def mousePos():
     return list(pygame.mouse.get_pos())
 
-glob = {"isKey": isKey, "isColliding": isColliding, "random": random, 
+
+glob = {"isKey": isKey, "isColliding": isColliding, "random": random,
         "delay": delay, "mousePos": mousePos}
+
 
 def run(objects, code):
     pygame.init()
@@ -122,19 +128,18 @@ def run(objects, code):
     clock = pygame.time.Clock()
     running = True
     init = True
-    
-    
+
     for obj in objects.keys():
         objects[obj].screen = screen
         exec(f"{obj} = Object(**objects[obj].__dict__)")
     objects = list(objects.keys())
-    
+
     global glob
     for i in dir():
-        exec(f"glob['{i}'] = {i}") if i not in ["clock", "obj", "screen", "code", 
-                                            "objects", "objs", "running"] else None
+        exec(f"glob['{i}'] = {i}") if i not in ["clock", "obj", "screen", "code",
+                                                "objects", "objs", "running"] else None
     print(glob.keys())
-    
+
     while running:
         clock.tick(FPS)
         for event in pygame.event.get():
@@ -150,4 +155,3 @@ def run(objects, code):
             exec(f"{obj}.update()")
         pygame.display.flip()
     pygame.quit()
-

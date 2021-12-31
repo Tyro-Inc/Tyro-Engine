@@ -71,6 +71,7 @@ class Image:
                 name=name,
                 ext=self.unedited.split("/")[-1].split(".")[-1],
             )
+            self.path = self.unedited
             os.rename(
                 self.edited,
                 r"{currentDir}/edited/{name}.{ext}".format(
@@ -429,12 +430,14 @@ class Text:
         except:
             pass
         self.canvasObject = self.canvas.create_text(
-            self.x, self.y, text=self.text, font=(self.font, self.size), fill=self.color
+            self.x, self.y, text=self.text, font=(
+                self.font, self.size), fill=self.color
         )
 
     def createCanvasObject(self):
         self.canvasObject = self.canvas.create_text(
-            self.x, self.y, text=self.text, font=(self.font, self.size), fill=self.color
+            self.x, self.y, text=self.text, font=(
+                self.font, self.size), fill=self.color
         )
 
     def delete(self):

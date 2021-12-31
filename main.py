@@ -15,6 +15,7 @@ import pygame
 path = None
 version = "1.3"
 
+
 class ProjectManager:
     def __init__(self, root):
         root.title("Project Manager | Tyro Engine")
@@ -85,7 +86,7 @@ class ProjectManager:
             bg=self.config["buttons"]["background"],
             fg=self.config["buttons"]["text"],
         )
-        self.deleteProjectButton.place(x=795, y=215, width=160, height=25)        
+        self.deleteProjectButton.place(x=795, y=215, width=160, height=25)
         self.addProjectButton = tk.Button(
             root,
             text="Add Project",
@@ -117,7 +118,8 @@ class ProjectManager:
             os.mkdir(path + "/assets")
             os.mkdir(path + "/assets/edited")
             global version
-            project = {"name": self.newProjectName.get(), "version": version, "objects": []}
+            project = {"name": self.newProjectName.get(
+            ), "version": version, "objects": []}
             json.dump(project, open(path + "/project.tyro", "w"))
             proj = {"name": self.newProjectName.get(), "path": path}
 
@@ -137,25 +139,28 @@ class ProjectManager:
             try:
                 pversion = proj["version"]
                 if pversion != version:
-                    messagebox.showerror("Error", "Project version is not compatible")
+                    messagebox.showerror(
+                        "Error", "Project version is not compatible")
                 elif os.path.isdir(self.path):
                     root.destroy()
             except:
-                messagebox.showerror("Error", "Project version is not compatible")
+                messagebox.showerror(
+                    "Error", "Project version is not compatible")
         except:
             messagebox.showerror("Error", "Invalid project file")
+
     def deleteProject(self):
         try:
             proj = self.projectList.get(self.projectList.curselection())
             path = proj.split(" |/| ")
-            proj ={"name": path[0], "path": path[1]}
+            proj = {"name": path[0], "path": path[1]}
             projs = json.load(open("projects.json"))
             projs.remove(proj)
             json.dump(projs, open("projects.json", "w"))
             self.projectList.delete(self.projectList.curselection())
         except:
             messagebox.showerror("Error", "Invalid project file")
-    
+
     def addProject(self):
         directory = filedialog.askdirectory(
             initialdir="/",
@@ -171,10 +176,12 @@ class ProjectManager:
                     try:
                         pversion = proj["version"]
                         if pversion.split(".")[:-1] != version.split(".")[:-1]:
-                            messagebox.showerror("Error", "Project version is not compatible")
+                            messagebox.showerror(
+                                "Error", "Project version is not compatible")
                             root.destroy()
                     except:
-                        messagebox.showerror("Error", "Project version is not compatible")
+                        messagebox.showerror(
+                            "Error", "Project version is not compatible")
                         root.destroy()
                     self.projectList.insert(tk.END, name + " |/| " + directory)
                     proj = {"name": name, "path": directory}
@@ -183,6 +190,7 @@ class ProjectManager:
                     json.dump(projs, open("projects.json", "w"))
                 except:
                     messagebox.showerror("Error", "Invalid project file")
+
 
 class App:
     def __init__(self, root, path):
@@ -412,7 +420,8 @@ class App:
             label="Image", command=lambda: self.addImage(""), accelerator="Ctrl+I")
         self.addobjectmenu.add_command(
             label="Rectangle", command=lambda: self.addRectangle(""), accelerator="Ctrl+R")
-        self.addobjectmenu.add_command(label="Ellipse", command=lambda: self.addEllipse(""), accelerator="Ctrl+E")
+        self.addobjectmenu.add_command(
+            label="Ellipse", command=lambda: self.addEllipse(""), accelerator="Ctrl+E")
         self.addobjectmenu.add_command(
             label="Line", command=lambda: self.addLine(""), accelerator="Ctrl+L")
         self.addobjectmenu.add_command(
@@ -431,6 +440,7 @@ class App:
         try:
             self.saveProject("")
             code = open(self.path + "/code.ty", "r").read()
+            print(self.objects)
             run(self.objects, code)
             pygame.quit()
         except Exception as e:
@@ -449,11 +459,11 @@ class App:
             width=690,
             height=445,
             font=("consolas", 15),
-            bg=self.config["editor"]["background"], 
+            bg=self.config["editor"]["background"],
             wrap="none"
         )
         tab.place(x=20, y=75, width=690, height=445)
-        
+
         hbar = tk.Scrollbar(tab, orient=tk.HORIZONTAL)
         hbar.pack(side=tk.BOTTOM, fill=tk.X)
         hbar.config(command=tab.xview)
@@ -461,7 +471,7 @@ class App:
         vbar.pack(side=tk.RIGHT, fill=tk.Y)
         vbar.config(command=tab.yview)
         tab.config(xscrollcommand=hbar.set, yscrollcommand=vbar.set)
-        
+
         return tab
 
     def newObject(self, name):
@@ -780,7 +790,7 @@ class App:
                 messagebox.showerror(
                     title="Error", message="Project version is not compatible")
                 return None
-                
+
             for obj in self.projectfile["objects"]:
                 if obj["type"] == "rectangle":
                     self.objects[obj["name"]] = Rectangle(
@@ -879,7 +889,8 @@ class App:
         """
         if self.path != None:
             global version
-            project = {"name": self.title.get(), "version": version, "objects": []}
+            project = {"name": self.title.get(), "version": version,
+                       "objects": []}
             projectfile = self.path + "/project.tyro"
             for obj in self.objects.keys():
                 Gameobject = self.objects[obj]
