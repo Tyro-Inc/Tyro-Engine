@@ -440,7 +440,6 @@ class App:
         try:
             self.saveProject("")
             code = open(self.path + "/code.ty", "r").read()
-            print(self.objects)
             run(self.objects, code)
             pygame.quit()
         except Exception as e:

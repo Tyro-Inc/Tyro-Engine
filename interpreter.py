@@ -138,7 +138,6 @@ def run(objects, code):
     for i in dir():
         exec(f"glob['{i}'] = {i}") if i not in ["clock", "obj", "screen", "code",
                                                 "objects", "objs", "running"] else None
-    print(glob.keys())
 
     while running:
         clock.tick(FPS)
