@@ -431,9 +431,19 @@ class App:
             width=690,
             height=445,
             font=("consolas", 15),
-            bg=self.config["editor"]["background"],
+            bg=self.config["editor"]["background"], 
+            wrap="none"
         )
         tab.place(x=20, y=75, width=690, height=445)
+        
+        hbar = tk.Scrollbar(tab, orient=tk.HORIZONTAL)
+        hbar.pack(side=tk.BOTTOM, fill=tk.X)
+        hbar.config(command=tab.xview)
+        vbar = tk.Scrollbar(tab, orient=tk.VERTICAL)
+        vbar.pack(side=tk.RIGHT, fill=tk.Y)
+        vbar.config(command=tab.yview)
+        tab.config(xscrollcommand=hbar.set, yscrollcommand=vbar.set)
+        
         return tab
 
     def newObject(self, name):
