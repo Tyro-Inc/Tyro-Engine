@@ -11,11 +11,11 @@
   - width  - Width of the image 
   - height  - Height of the image
 - Methods
-  - move_x - Move the x position of the image
-  - move_y - Move the y position of the image
-  - change_Width - Change width of the image
-  - change_Height - Change height of the image
-  - change_Scale - Change scale of the image
+  - moveX - Move the x position of the image
+  - moveY - Move the y position of the image
+  - changeWidth - Change width of the image
+  - changeHeight - Change height of the image
+  - changeScale - Change scale of the image
   - goto - Go to `x, y` position
 
 ### Rectangle / Ellipse
@@ -28,12 +28,12 @@
   - height  - Height of the object
   - color - Color of the object
 - Methods
-  - move_x - Move the x position of the object
-  - move_y - Move the y position of the object
-  - change_Width - Change width of the object
-  - change_Height - Change height of the object
-  - change_Scale - Change scale of the object
-  - change_Color- Change color of the object
+  - moveX - Move the x position of the object
+  - moveY - Move the y position of the object
+  - changeWidth - Change width of the object
+  - changeHeight - Change height of the object
+  - changeScale - Change scale of the object
+  - changeColor- Change color of the object
   - goto - Go to `x, y` position
 
 ### Line
@@ -47,13 +47,13 @@
   - color - Color of the object
   - thickness - Color of the object
 - Methods
-  - move_x - Move the x position of the object
-  - move_y - Move the y position of the object
-  - change_Width - Change width of the object
-  - change_Height - Change height of the object
-  - change_Scale - Change scale of the object
-  - change_Color- Change color of the object
-  - change_Thickness - Change thickness of the object
+  - moveX - Move the x position of the object
+  - moveY - Move the y position of the object
+  - changeWidth - Change width of the object
+  - changeHeight - Change height of the object
+  - changeScale - Change scale of the object
+  - changeColor- Change color of the object
+  - changeThickness - Change thickness of the object
   - goto - Go to `x, y` position
 
 ###  Text
@@ -66,10 +66,10 @@
   - size - Size of the text
   - text - Text of the text
 - Methods
-  - move_x - Move the x position of the object
-  - move_y - Move the y position of the object
-  - change_Color- Change color of the object
-  - change_Text - Change text of the text
+  - moveX - Move the x position of the object
+  - moveY - Move the y position of the object
+  - changeColor- Change color of the object
+  - changeText - Change text of the text
   - goto - Go to `x, y` position
 
 ## In-Built
