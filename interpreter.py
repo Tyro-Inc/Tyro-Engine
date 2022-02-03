@@ -22,43 +22,43 @@ class Object:
     def __repr__(self):
         return str(self.__dict__)
 
-    def move_x(self, x):
+    def moveX(self, x):
         self.x += x
 
-    def move_y(self, y):
+    def moveY(self, y):
         self.y += y
 
-    def change_Width(self, w):
+    def changeWidth(self, w):
         if self.type != "text":
             self.width = w
         else:
             raise Exception("Can't change width of text")
 
-    def change_Height(self, h):
+    def changeHeight(self, h):
         if self.type != "text":
             self.height = h
         else:
             raise Exception("Can't change height of text")
 
-    def change_Color(self, color):
+    def changeColor(self, color):
         if self.type != "image":
             self.color = color
         else:
             raise Exception("Can't change color of image")
 
-    def change_Thickness(self, thickness):
+    def changeThickness(self, thickness):
         if self.type == "line":
             self.thickness = thickness
         else:
             raise Exception("Can't change thickness of non-line")
 
-    def change_Text(self, text):
+    def changeText(self, text):
         if self.type == "text":
             self.text = text
         else:
             raise Exception("Can't change text of non-text")
 
-    def change_Scale(self, scale):
+    def changeScale(self, scale):
         if self.type != "text":
             self.scale = scale
         else:
