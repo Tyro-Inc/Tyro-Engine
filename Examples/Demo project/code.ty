@@ -1,0 +1,6 @@
+
+if isKey("s"):
+	player.move_y(1)
+
+if isColliding(player, circ):
+	text.change_Text("Collided!")

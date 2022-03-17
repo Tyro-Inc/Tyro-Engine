@@ -1,0 +1,17 @@
+{
+    "name": "Mouse Position Demo",
+    "version": "1.3",
+    "objects": [
+        {
+            "name": "mp",
+            "type": "text",
+            "id": "7849",
+            "x": 100.0,
+            "y": 100.0,
+            "color": "#000000",
+            "text": "[100, 100]",
+            "font": "Agency FB",
+            "size": 20
+        }
+    ]
+}

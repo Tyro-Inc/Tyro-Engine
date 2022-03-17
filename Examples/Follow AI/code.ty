@@ -1,0 +1,44 @@
+if init:
+	# Window Customization
+	import pygame
+	pygame.display.set_caption('Follow AI')
+
+	#Variables
+	enemySpeed = 2
+	follow = True
+
+# Enemy Follow
+if obj1.x < player.x:
+	obj1.move_x(enemySpeed)
+if obj1.x > player.x:
+	obj1.move_x(-enemySpeed)
+if obj1.y < player.y:
+	obj1.move_y(enemySpeed)
+if obj1.y > player.y:
+	obj1.move_y(-enemySpeed)
+
+#Collision
+if isColliding(obj1, player):
+	follow = False
+
+#Replay
+if not follow:
+	if isKey("SPACE"):
+		obj1.goto(50, 50)
+		follow = True
+
+#Text Control
+if follow:
+	Lose.text = ""
+else:
+	Lose.text = "You Lose! Press Space to Play again "
+
+# Player Movement
+if follow:
+	player.goto(mousePos()[0]-player.width/2,mousePos()[1]-player.width/2)
+
+
+
+
+
+

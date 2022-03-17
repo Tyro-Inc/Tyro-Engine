@@ -1,0 +1,78 @@
+if init:
+	scorecount=0
+	speed = 5
+	follow = True
+
+if follow:
+	if isKey("w") and player.y > 50:
+		player.move_y(-1*speed)
+	if isKey("a") and player.x > 0:
+		player.move_x(-1*speed)
+	if isKey("s") and player.y + player.height + 2 < 400:
+		player.move_y(speed)
+	if isKey("d") and player.x + player.width + 2 < 400:
+		player.move_x(speed)
+
+
+if isColliding(flag, player):
+	scorecount+=1
+	flag.goto(random(0, 375), random(50, 375))
+
+if isColliding(enemy, player):
+	scorecount-=1	
+	enemy.goto(random(0, 375), random(50, 375))
+	
+score.change_Text("Flags: "+str(scorecount))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

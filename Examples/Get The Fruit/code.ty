@@ -1,0 +1,23 @@
+import random
+
+if init:
+	fruit.goto(random.randint(10,390),random.randint(100,390))
+	speed = 2
+	score = 0
+	Score.text ="Score : " + str(score)
+
+if isColliding(player, fruit):
+	fruit.goto(random.randint(10,390),random.randint(100,390))
+	score += 1
+	Score.text ="Score : " + str(score)
+
+if isKey("W"):
+	player.move_y(-speed)
+if isKey("S"):
+	player.move_y(speed)
+if isKey("A"):
+	player.move_x(-speed)
+if isKey("D"):
+	player.move_x(speed)
+
+

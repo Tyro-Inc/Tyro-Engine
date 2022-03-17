@@ -1,0 +1,40 @@
+import pygame
+pygame.display.set_caption('Mouse Maze')
+
+if init:
+	speed = 2
+	follow = True
+	YouWin.change_Text("")
+
+if player.x < 0 or player.x > 400 or player.y < 0 or player.y > 400:
+	player.goto(10, 10)
+
+if follow:
+	if isKey("W"):
+		player.move_y(-speed)
+	if isKey("S"):
+		player.move_y(speed)
+	if isKey("A"):
+		player.move_x(-speed)
+	if isKey("D"):
+		player.move_x(speed)
+
+walls = [wall1, wall2, wall3, wall4, wall5, wall6, wall7, 
+	wall8, wall9, wallHorizontal, wall10, wall11, wall12,
+	wall13, wall14, wall15, wall16, wall17, wall18, wall19, 
+	wall20, wall21, wall22, wall23, wall24]
+
+for wall in walls:
+	if isColliding(player, wall):
+		player.goto(10, 10)
+
+if isColliding(player, Ending):
+	YouWin.change_Text("You Win!")	
+
+
+
+
+
+
+
+

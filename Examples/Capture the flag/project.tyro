@@ -1,0 +1,72 @@
+{
+    "name": "Capture the Flag",
+    "version": "1.3",
+    "objects": [
+        {
+            "name": "player",
+            "type": "rectangle",
+            "id": "3411",
+            "x": 100.0,
+            "y": 100.0,
+            "width": 25.0,
+            "height": 25.0,
+            "scale": 1.0,
+            "color": "#d6e75a"
+        },
+        {
+            "name": "header",
+            "type": "rectangle",
+            "id": "3257",
+            "x": 0.0,
+            "y": 0.0,
+            "width": 400.0,
+            "height": 50.0,
+            "scale": 1.0,
+            "color": "#9c9c9c"
+        },
+        {
+            "name": "flag",
+            "type": "rectangle",
+            "id": "1650",
+            "x": 100.0,
+            "y": 100.0,
+            "width": 20.0,
+            "height": 20.0,
+            "scale": 1.0,
+            "color": "#59ff42"
+        },
+        {
+            "name": "name",
+            "type": "text",
+            "id": "2139",
+            "x": 200.0,
+            "y": 25.0,
+            "color": "#000000",
+            "text": "Capture the Flag",
+            "font": "Agency FB",
+            "size": 20
+        },
+        {
+            "name": "score",
+            "type": "text",
+            "id": "5571",
+            "x": 55.0,
+            "y": 25.0,
+            "color": "#000000",
+            "text": "Score:  0",
+            "font": "Agency FB",
+            "size": 18
+        },
+        {
+            "name": "enemy",
+            "type": "rectangle",
+            "id": "5221",
+            "x": 175.0,
+            "y": 175.0,
+            "width": 25.0,
+            "height": 25.0,
+            "scale": 1.0,
+            "color": "#ff0000"
+        }
+    ]
+}
