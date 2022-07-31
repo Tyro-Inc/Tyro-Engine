@@ -6,7 +6,7 @@
 # What is Tyro Engine?
 ### Tyro Engine a Game Engine with all the basic features of a modern game engine in a simple and easy to use interface.
 
-### Tyro Engine teachs the basics of programming like variables, loops, functions, and more.
+### Tyro Engine teaches the basics of programming like variables, loops, functions, and more.
 <br>
 
 # Features
